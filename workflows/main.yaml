@@ -1,0 +1,54 @@
+name: main
+args:
+  run_id:
+    default: $(uuidgen)
+env:
+  RUN_ID: ${run_id}
+  PG_CONNECTION_STRING: ${PG_CONNECTION_STRING}
+  ORG_ID: ${ORG_ID}
+  AGENT_ID: ${AGENT_ID}
+steps:
+  - id: provision-schema
+    run: python3 scripts/data_writer.py provision
+    timeout_ms: 30000
+  - id: ingest_context
+    run: bash skills/repo-signal-ingest/scripts/run.sh
+    stdin: "workspace/inputs/repo-signal-ingest.json"
+    when: github_context_available
+    timeout_ms: 120000
+    retry: 1
+  - id: clarify_requirements
+    run: bash skills/clarify-requirements/scripts/run.sh
+    stdin: "workspace/inputs/clarify-requirements.json"
+    timeout_ms: 120000
+    retry: 1
+  - id: synthesize_architecture
+    run: bash skills/architecture-synthesis/scripts/run.sh
+    stdin: "workspace/inputs/architecture-synthesis.json"
+    timeout_ms: 180000
+    retry: 1
+  - id: evaluate_tradeoffs
+    run: bash skills/tradeoff-optimization/scripts/run.sh
+    stdin: "workspace/inputs/tradeoff-optimization.json"
+    timeout_ms: 120000
+    retry: 1
+  - id: estimate_cost
+    run: bash skills/cost-estimation/scripts/run.sh
+    stdin: "workspace/inputs/cost-estimation.json"
+    timeout_ms: 120000
+    retry: 1
+  - id: render_diagram
+    run: bash skills/diagram-generation/scripts/run.sh
+    stdin: "workspace/inputs/diagram-generation.json"
+    timeout_ms: 120000
+    retry: 1
+  - id: apply_adaptive_changes
+    run: bash skills/adaptive-optimization/scripts/run.sh
+    stdin: "workspace/inputs/adaptive-optimization.json"
+    when: constraints_changed
+    timeout_ms: 180000
+    retry: 1
+  - id: publish_summary
+    run: "python3 scripts/github_action.py --emit-summary"
+    timeout_ms: 120000
+    retry: 0

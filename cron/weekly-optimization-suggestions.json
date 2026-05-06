@@ -1,0 +1,16 @@
+{
+  "name": "weekly-optimization-suggestions",
+  "enabled": true,
+  "schedule": {
+    "kind": "cron",
+    "expr": "0 14 * * 1",
+    "tz": "UTC"
+  },
+  "sessionTarget": "web",
+  "wakeMode": "scheduled",
+  "payload": {
+    "kind": "agentTurn",
+    "message": "Review active architecture projects, repo signals, and stored patterns; suggest practical optimizations for scale, latency, reliability, and cost.",
+    "timeoutSeconds": 1800
+  }
+}

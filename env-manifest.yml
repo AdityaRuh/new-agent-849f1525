@@ -1,0 +1,91 @@
+infrastructure:
+  - key: STATE_DB_URL
+    label: State database URL
+    required: true
+    secret: true
+  - key: VECTOR_DB_URL
+    label: Optional vector database URL
+    required: false
+    secret: false
+  - key: VECTOR_DB_API_KEY
+    label: Optional vector database API key
+    required: false
+    secret: true
+  - key: ARTIFACT_BUCKET
+    label: Optional artifact storage bucket
+    required: false
+    secret: false
+connector:
+  - key: GITHUB_TOKEN
+    label: GitHub token
+    required: true
+    secret: true
+  - key: NOTION_TOKEN
+    label: Notion token
+    required: false
+    secret: true
+  - key: LINEAR_API_KEY
+    label: Linear API key
+    required: false
+    secret: true
+  - key: JIRA_API_TOKEN
+    label: Jira API token
+    required: false
+    secret: true
+  - key: AWS_ACCESS_KEY_ID
+    label: AWS access key ID
+    required: false
+    secret: true
+  - key: AWS_SECRET_ACCESS_KEY
+    label: AWS secret access key
+    required: false
+    secret: true
+  - key: AWS_REGION
+    label: AWS region
+    required: false
+    secret: false
+  - key: GOOGLE_APPLICATION_CREDENTIALS_JSON
+    label: Google Cloud service account JSON
+    required: false
+    secret: true
+  - key: AZURE_CLIENT_ID
+    label: Azure client ID
+    required: false
+    secret: true
+  - key: AZURE_CLIENT_SECRET
+    label: Azure client secret
+    required: false
+    secret: true
+  - key: AZURE_TENANT_ID
+    label: Azure tenant ID
+    required: false
+    secret: false
+  - key: AZURE_SUBSCRIPTION_ID
+    label: Azure subscription ID
+    required: false
+    secret: false
+channel:
+  - key: WEB_APP_URL
+    label: Web app URL
+    required: true
+    secret: false
+  - key: SLACK_BOT_TOKEN
+    label: Slack bot token
+    required: false
+    secret: true
+  - key: SLACK_CHANNEL_ID
+    label: Slack channel ID
+    required: false
+    secret: false
+  - key: GITHUB_APP_NAME
+    label: GitHub app name for PR comments
+    required: false
+    secret: false
+  - key: GITHUB_WEBHOOK_SECRET
+    label: GitHub webhook secret
+    required: false
+    secret: true
+  - key: CLI_ENABLED
+    label: CLI channel enabled flag
+    required: false
+    secret: false

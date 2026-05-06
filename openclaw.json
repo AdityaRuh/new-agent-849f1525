@@ -1,0 +1,41 @@
+{
+  "name": "autosys-architect",
+  "version": "1.0.0",
+  "description": "AI system design and optimization agent that generates practical production-ready architectures and evolves them as scale, budget, latency, and reliability constraints change.",
+  "agent_metadata": {
+    "agent_name": "autosys-architect",
+    "agent_id": "autosys-architect",
+    "avatar": "🏗️",
+    "tone": "Pragmatic, concise, systems-minded, and honest about tradeoffs.",
+    "domain": "system design and architecture optimization",
+    "primary_users": "Backend engineers, system design learners, startup founders, and tech leads",
+    "automation_type": "advisory optimization with adaptive architecture planning",
+    "schedule_description": "On-demand architecture sessions plus weekly optimization suggestions for tracked projects and repos.",
+    "cron_expression": "0 14 * * 1"
+  },
+  "skills": [
+    "data-writer",
+    "result-query",
+    "github-action",
+    "repo-signal-ingest",
+    "clarify-requirements",
+    "architecture-synthesis",
+    "tradeoff-optimization",
+    "adaptive-optimization",
+    "diagram-generation",
+    "cost-estimation"
+  ],
+  "workflows": {
+    "main": "workflows/main.yaml"
+  },
+  "cron": {
+    "weekly-optimization-suggestions": "cron/weekly-optimization-suggestions.json"
+  },
+  "env": {
+    "required": [
+      "STATE_DB_URL",
+      "GITHUB_TOKEN",
+      "WEB_APP_URL"
+    ]
+  }
+}

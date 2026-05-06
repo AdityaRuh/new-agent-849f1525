@@ -1,0 +1,314 @@
+version: "1.0"
+agent_id: "autosys-architect"
+
+tables:
+  design_requests:
+    description: Incoming architecture design requests and their current status.
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique request identifier.
+      user_id:
+        type: string
+        description: Requester or workspace user identifier.
+      source:
+        type: string
+        required: true
+        description: "Request source such as web, slack, cli, or github."
+      product_idea:
+        type: string
+        required: true
+        description: Natural language problem statement or product idea.
+      constraints_json:
+        type: string
+        description: "Serialized JSON of normalized constraints such as scale, latency, budget, and reliability targets."
+      status:
+        type: string
+        required: true
+        description: "Lifecycle status such as new, clarifying, designing, optimized, or published."
+      created_at:
+        type: string
+        required: true
+        description: "Creation timestamp in ISO-8601 format."
+      updated_at:
+        type: string
+        required: true
+        description: "Last update timestamp in ISO-8601 format."
+    indexes:
+      - columns: [status]
+        name: idx_design_requests_status
+      - columns: [user_id]
+        name: idx_design_requests_user_id
+  architecture_versions:
+    description: Versioned architecture proposals for a request.
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique architecture version identifier.
+      request_id:
+        type: string
+        required: true
+        description: Parent request identifier.
+      version:
+        type: integer
+        required: true
+        description: Version number for this proposal.
+      summary:
+        type: string
+        required: true
+        description: Concise summary of the recommended architecture.
+      diagram_uri:
+        type: string
+        description: URI or path to generated diagram artifact.
+      tradeoffs_json:
+        type: string
+        description: "Serialized JSON of tradeoffs, assumptions, and alternatives considered."
+      cost_monthly_usd:
+        type: integer
+        description: Estimated monthly cost in USD (rounded integer).
+      target_scale:
+        type: string
+        description: "Target scale band such as 1k, 100k, or 1M users."
+      latency_budget_ms:
+        type: integer
+        description: Latency budget in milliseconds.
+      reliability_target:
+        type: string
+        description: Reliability target such as 99.9 or 99.99.
+      created_at:
+        type: string
+        required: true
+        description: "Creation timestamp in ISO-8601 format."
+    indexes:
+      - columns: [request_id]
+        name: idx_architecture_versions_request_id
+      - columns: [request_id, version]
+        name: idx_architecture_versions_request_version
+  repo_signals:
+    description: "Signals derived from repository analysis, pull requests, and related metadata."
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique repo signal identifier.
+      repo_url:
+        type: string
+        required: true
+        description: Repository URL.
+      commit_sha:
+        type: string
+        description: Commit or PR head SHA analyzed.
+      findings_json:
+        type: string
+        required: true
+        description: "Serialized JSON with structured findings about architecture, risks, and improvement opportunities."
+      created_at:
+        type: string
+        required: true
+        description: "Creation timestamp in ISO-8601 format."
+    indexes:
+      - columns: [repo_url]
+        name: idx_repo_signals_repo_url
+  pattern_library:
+    description: "Reusable system design patterns and anti-patterns."
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique pattern identifier.
+      pattern_key:
+        type: string
+        required: true
+        description: "Stable key such as monolith-first or event-driven-fanout."
+      category:
+        type: string
+        required: true
+        description: Pattern category.
+      description:
+        type: string
+        required: true
+        description: Human readable pattern summary.
+      fit_conditions_json:
+        type: string
+        description: Serialized JSON of when this pattern is a strong fit.
+      anti_patterns_json:
+        type: string
+        description: Serialized JSON of conditions where this pattern should be avoided.
+      examples_json:
+        type: string
+        description: Serialized JSON of example usages and reference architectures.
+      updated_at:
+        type: string
+        required: true
+        description: "Last update timestamp in ISO-8601 format."
+    indexes:
+      - columns: [pattern_key]
+        name: idx_pattern_library_pattern_key
+      - columns: [category]
+        name: idx_pattern_library_category
+  benchmark_library:
+    description: Infrastructure comparison and benchmark facts used for tradeoffs and recommendations.
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique benchmark identifier.
+      benchmark_key:
+        type: string
+        required: true
+        description: "Stable benchmark key such as kafka-vs-rabbitmq."
+      metric_type:
+        type: string
+        required: true
+        description: "Metric type such as throughput, latency, durability, or cost."
+      scenario:
+        type: string
+        required: true
+        description: Benchmark scenario context.
+      comparison_json:
+        type: string
+        required: true
+        description: Serialized JSON comparison data.
+      source:
+        type: string
+        description: Source reference.
+      updated_at:
+        type: string
+        required: true
+        description: "Last update timestamp in ISO-8601 format."
+    indexes:
+      - columns: [benchmark_key]
+        name: idx_benchmark_library_benchmark_key
+      - columns: [metric_type]
+        name: idx_benchmark_library_metric_type
+  cost_estimates:
+    description: Monthly infra cost estimates and assumptions.
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique cost estimate identifier.
+      architecture_version_id:
+        type: string
+        required: true
+        description: Associated architecture version.
+      provider:
+        type: string
+        required: true
+        description: Cloud provider or SaaS vendor.
+      estimate_json:
+        type: string
+        required: true
+        description: "Serialized JSON component-level cost breakdown."
+      monthly_usd:
+        type: integer
+        required: true
+        description: Total monthly estimate in USD (rounded integer).
+      assumptions_json:
+        type: string
+        description: Serialized JSON assumptions behind the estimate.
+      created_at:
+        type: string
+        required: true
+        description: "Creation timestamp in ISO-8601 format."
+    indexes:
+      - columns: [architecture_version_id]
+        name: idx_cost_estimates_architecture_version_id
+  user_memory:
+    description: "Persistent user preferences, history, and learning signals."
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique memory identifier.
+      user_id:
+        type: string
+        required: true
+        description: User identifier.
+      memory_type:
+        type: string
+        required: true
+        description: "Type such as preference, context, or prior_decision."
+      content_json:
+        type: string
+        required: true
+        description: Serialized JSON stored memory content.
+      created_at:
+        type: string
+        required: true
+        description: "Creation timestamp in ISO-8601 format."
+      updated_at:
+        type: string
+        required: true
+        description: "Last update timestamp in ISO-8601 format."
+    indexes:
+      - columns: [user_id]
+        name: idx_user_memory_user_id
+      - columns: [memory_type]
+        name: idx_user_memory_type
+  optimization_runs:
+    description: History of adaptive optimization changes between architecture versions.
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: string
+        primary_key: true
+        required: true
+        auto_generate: true
+        description: Unique optimization run identifier.
+      request_id:
+        type: string
+        required: true
+        description: Parent design request identifier.
+      from_version_id:
+        type: string
+        description: Source architecture version.
+      to_version_id:
+        type: string
+        description: Target architecture version.
+      change_reason:
+        type: string
+        required: true
+        description: Why the optimization was applied.
+      applied_changes_json:
+        type: string
+        required: true
+        description: Serialized JSON list of changes applied.
+      created_at:
+        type: string
+        required: true
+        description: "Creation timestamp in ISO-8601 format."
+    indexes:
+      - columns: [request_id]
+        name: idx_optimization_runs_request_id
